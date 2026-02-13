@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>派克小型工具庫</title>
+    <style>
+        /* 全局設定 */
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 登入畫面樣式 */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box; /* 確保 padding 不會撐大寬度 */
+        }
+
+        button.login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        button.login-btn:hover {
+            background-color: #357abd;
+        }
+
+        #error-msg {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* 主畫面內容樣式 */
+        #main-content {
+            display: none; /* 預設隱藏，登入後顯示 */
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+
+        /* 卡片容器：Flexbox 佈局 */
+        .card-container {
+            display: flex;
+            justify-content: space-between; /* 水平分佈 */
+            gap: 20px;
+            flex-wrap: wrap; /* 允許換行，適應手機 */
+        }
+
+        /* 單張卡片樣式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            flex: 1; /* 讓卡片平均分配寬度 */
+            min-width: 280px; /* 最小寬度，防止手機上太擠 */
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-top: 0;
+            color: #444;
+            font-size: 1.25rem;
+        }
+
+        /* 分類標籤顏色條 */
+        .card.tutor { border-top: 5px solid #4a90e2; }
+        .card.accounting { border-top: 5px solid #e74c3c; }
+        .card.leadership { border-top: 5px solid #f1c40f; }
+
+        /* 按鈕連結樣式 */
+        .link-btn {
+            display: block;
+            text-decoration: none;
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .link-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 手機版適應 (@media query) */
+        @media (max-width: 768px) {
+            .card-container {
+                flex-direction: column; /* 手機改為垂直排列 */
+            }
+            
+            .card {
+                width: 100%; /* 手機上佔滿寬度 */
+                margin-bottom: 20px;
+                box-sizing: border-box; /* 確保 padding 不超出螢幕 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>派克小型工具庫</h2>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="帳戶 (Username)">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="密碼 (Password)">
+            </div>
+            <button class="login-btn" onclick="checkLogin()">登入</button>
+            <p id="error-msg">帳戶或密碼錯誤</p>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <header>
+            <h1>派克小型工具庫</h1>
+            <p style="color: #666;">請選擇您要前往的工具</p>
+        </header>
+
+        <div class="card-container">
+            
+            <div class="card tutor">
+                <h3>👨‍🏫 導師及課堂相關</h3>
+                <a href="https://harryleung522.github.io/Pi-Timetable/" target="_blank" class="link-btn">Pi Timetable</a>
+                <a href="https://harryleung522.github.io/Tutor-Reminder/" target="_blank" class="link-btn">Pi Tutor Reminder</a>
+                <a href="https://harryleung522.github.io/tutor-dashboard/" target="_blank" class="link-btn">Pi Tutor Dashboard</a>
+            </div>
+
+            <div class="card accounting">
+                <h3>💰 會計相關</h3>
+                <a href="https://harryleung522.github.io/Red-4.0/" target="_blank" class="link-btn">Red 4.0</a>
+            </div>
+
+            <div class="card leadership">
+                <h3>🚩 Leadership</h3>
+                <a href="https://harryleung522.github.io/Pi-Mission-Board/" target="_blank" class="link-btn">Pi Mission Board</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function checkLogin() {
+            // 取得輸入值
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+            const loginScreen = document.getElementById('login-screen');
+            const mainContent = document.getElementById('main-content');
+
+            // 驗證邏輯
+            if (user === 'pi' && pass === 'piaddoil') {
+                // 登入成功
+                errorMsg.style.display = 'none';
+                
+                // 淡出登入畫面 (簡單動畫)
+                loginScreen.style.opacity = '0';
+                loginScreen.style.transition = 'opacity 0.5s';
+                
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    // 簡單的淡入
+                    mainContent.style.opacity = 0;
+                    setTimeout(() => {
+                        mainContent.style.opacity = 1;
+                        mainContent.style.transition = 'opacity 0.5s';
+                    }, 50);
+                }, 500);
+
+            } else {
+                // 登入失敗
+                errorMsg.style.display = 'block';
+                // 震動效果
+                document.querySelector('.login-box').animate([
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(-10px)' },
+                    { transform: 'translateX(10px)' },
+                    { transform: 'translateX(0)' }
+                ], {
+                    duration: 300
+                });
+            }
+        }
+
+        // 支援按 Enter 鍵登入
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkLogin();
+            }
+        });
+    </script>
+</body>
+</html>
