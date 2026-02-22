@@ -64,7 +64,7 @@
             margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 8px;
-            box-sizing: border-box; /* 確保 padding 不會撐大寬度 */
+            box-sizing: border-box;
         }
 
         button.login-btn {
@@ -93,7 +93,7 @@
 
         /* 主畫面內容樣式 */
         #main-content {
-            display: none; /* 預設隱藏，登入後顯示 */
+            display: none;
             width: 100%;
             max-width: 1200px;
             padding: 20px;
@@ -114,9 +114,9 @@
         /* 卡片容器：Flexbox 佈局 */
         .card-container {
             display: flex;
-            justify-content: space-between; /* 水平分佈 */
+            justify-content: space-between;
             gap: 20px;
-            flex-wrap: wrap; /* 允許換行，適應手機 */
+            flex-wrap: wrap;
         }
 
         /* 單張卡片樣式 */
@@ -125,8 +125,8 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             padding: 25px;
-            flex: 1; /* 讓卡片平均分配寬度 */
-            min-width: 280px; /* 最小寬度，防止手機上太擠 */
+            flex: 1;
+            min-width: 280px;
             transition: transform 0.2s;
             display: flex;
             flex-direction: column;
@@ -171,16 +171,16 @@
             border-color: var(--primary-color);
         }
 
-        /* 手機版適應 (@media query) */
+        /* 手機版適應 */
         @media (max-width: 768px) {
             .card-container {
-                flex-direction: column; /* 手機改為垂直排列 */
+                flex-direction: column;
             }
             
             .card {
-                width: 100%; /* 手機上佔滿寬度 */
+                width: 100%;
                 margin-bottom: 20px;
-                box-sizing: border-box; /* 確保 padding 不超出螢幕 */
+                box-sizing: border-box;
             }
         }
     </style>
@@ -224,6 +224,7 @@
             <div class="card leadership">
                 <h3>🚩 Leadership</h3>
                 <a href="https://harryleung522.github.io/Pi-Mission-Board/" target="_blank" class="link-btn">Pi Mission Board</a>
+                <a href="https://harryleung522.github.io/Pi-Mission-Dashboard/" target="_blank" class="link-btn">Pi Mission Dashboard</a>
             </div>
 
         </div>
@@ -231,26 +232,20 @@
 
     <script>
         function checkLogin() {
-            // 取得輸入值
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const errorMsg = document.getElementById('error-msg');
             const loginScreen = document.getElementById('login-screen');
             const mainContent = document.getElementById('main-content');
 
-            // 驗證邏輯
             if (user === 'pi' && pass === 'piaddoil') {
-                // 登入成功
                 errorMsg.style.display = 'none';
-                
-                // 淡出登入畫面 (簡單動畫)
                 loginScreen.style.opacity = '0';
                 loginScreen.style.transition = 'opacity 0.5s';
                 
                 setTimeout(() => {
                     loginScreen.style.display = 'none';
                     mainContent.style.display = 'block';
-                    // 簡單的淡入
                     mainContent.style.opacity = 0;
                     setTimeout(() => {
                         mainContent.style.opacity = 1;
@@ -259,9 +254,7 @@
                 }, 500);
 
             } else {
-                // 登入失敗
                 errorMsg.style.display = 'block';
-                // 震動效果
                 document.querySelector('.login-box').animate([
                     { transform: 'translateX(0)' },
                     { transform: 'translateX(-10px)' },
@@ -273,7 +266,6 @@
             }
         }
 
-        // 支援按 Enter 鍵登入
         document.getElementById('password').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 checkLogin();
